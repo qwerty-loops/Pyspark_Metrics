@@ -1,0 +1,18 @@
+FROM apache/spark:latest
+
+# Create directories as root
+USER root
+RUN mkdir -p /home/spark/.ivy2 && chmod -R 777 /home/spark/.ivy2
+
+RUN pip install redis
+
+ENV HOME=/home/spark
+# Add Spark bin directory to PATH
+ENV PATH="/opt/spark/bin:${PATH}"
+
+WORKDIR /app
+
+COPY Trip_Data.parquet /app/
+COPY Process_trips.py /app/
+
+ENTRYPOINT ["spark-submit", "Process_trips.py"]

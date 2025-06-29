@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NYC Taxi Trip Metrics</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    label, select, button { margin: 5px; }
+    #results { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>NYC Taxi Trip Metrics</h1>
+
+  <label for="hour">Select Hour:</label>
+  <select id="hour">
+    <script>
+      for (let i = 0; i < 24; i++) {
+        let hr = i.toString().padStart(2, '0') + ":00";
+        document.write(`<option value="${hr}">${hr}</option>`);
+      }
+    </script>
+  </select>
+  <button onclick="loadMetrics()">Load Metrics</button>
+
+  <div id="results"></div>
+
+  <script>
+    async function loadMetrics() {
+      const hour = document.getElementById('hour').value;
+
+      const tripsRes = await fetch(`http://localhost:5000/api/trips?hour=${hour}`);
+      const revenueRes = await fetch(`http://localhost:5000/api/revenue?hour=${hour}`);
+      const distanceRes = await fetch(`http://localhost:5000/api/distance?hour=${hour}`);
+
+      const tripsData = await tripsRes.json();
+      const revenueData = await revenueRes.json();
+      const distanceData = await distanceRes.json();
+
+     document.getElementById('results').innerHTML = `
+      <h3>Results for ${hour}</h3>
+      <ul>
+        <li><strong>Trip Count:</strong> ${tripsData.Trip_Count}</li>
+        <li><strong>Total Revenue:</strong> $${parseFloat(revenueData.Revenue).toFixed(2)}</li>
+        <li><strong>Average Distance:</strong> ${parseFloat(distanceData.Distance).toFixed(2)} miles</li>
+      </ul>
+    `;
+
+    }
+  </script>
+</body>
+</html>

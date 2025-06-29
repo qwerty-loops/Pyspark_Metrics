@@ -1,0 +1,11 @@
+FROM python:3.9-slim
+
+RUN pip install flask redis flask-cors
+
+WORKDIR /app
+
+COPY flask_app.py /app/
+
+EXPOSE 5000
+
+ENTRYPOINT ["python", "flask_app.py"]

@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  spark-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
+    depends_on:
+      - redis
+    environment:
+      - HOME=/home/spark
+    volumes:
+      - ivy-cache:/home/spark/.ivy2
+
+  flask-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    depends_on:
+      - redis
+    ports:
+      - "5000:5000"
+
+volumes:
+  ivy-cache:
